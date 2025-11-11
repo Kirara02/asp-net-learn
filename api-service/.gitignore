@@ -42,5 +42,4 @@ secrets.json
 .env.*
 *.sqlite
 
-# macOS system files
-.DS_Store
+Logs/

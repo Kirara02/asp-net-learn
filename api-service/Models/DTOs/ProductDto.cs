@@ -6,8 +6,8 @@ namespace ApiService.Models.DTOs
     {
         [Required, MaxLength(100)]
         public string Name { get; set; } = string.Empty;
-
-        [Range(0.01, 999999)]
+    
+        [Required]
         public decimal Price { get; set; }
 
         [MaxLength(255)]
@@ -21,5 +21,12 @@ namespace ApiService.Models.DTOs
         public decimal Price { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
+    }
+
+    public class ProductUpdateDto
+    {
+        public string? Name { get; set; }
+        public decimal? Price { get; set; }
+        public string? Description { get; set; }
     }
 }

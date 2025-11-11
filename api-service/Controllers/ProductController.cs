@@ -1,39 +1,25 @@
-using ApiService.Data;
-using ApiService.Models;
 using ApiService.Models.DTOs;
+using ApiService.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ApiService.Controllers
 {
     [ApiController]
     [Route("api/products")]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
-        private readonly ILogger<ProductController> _logger;
-        private readonly AppDbContext _db;
+        private readonly IProductService _service;
 
-        public ProductController(ILogger<ProductController> logger, AppDbContext db)
+        public ProductsController(IProductService service)
         {
-            _logger = logger;
-            _db = db;
+            _service = service;
         }
 
         // 🔹 GET: api/products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductReadDto>>> GetAll()
         {
-            var products = await _db.Products
-                .Select(p => new ProductReadDto
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Price = p.Price,
-                    Description = p.Description,
-                    CreatedAt = p.CreatedAt
-                })
-                .ToListAsync();
-
+            var products = await _service.GetAllAsync();
             return Ok(products);
         }
 
@@ -41,77 +27,42 @@ namespace ApiService.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductReadDto>> GetById(int id)
         {
-            var p = await _db.Products.FindAsync(id);
-            if (p == null)
-                return NotFound(new { message = $"Product dengan id {id} tidak ditemukan." });
+            var product = await _service.GetByIdAsync(id);
+            if (product == null)
+                return NotFound(new { message = $"Product with id {id} not found." });
 
-            return Ok(new ProductReadDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Price = p.Price,
-                Description = p.Description,
-                CreatedAt = p.CreatedAt
-            });
+            return Ok(product);
         }
 
         // 🔹 POST: api/products
         [HttpPost]
-        public async Task<ActionResult<ProductReadDto>> Create(ProductCreateDto dto)
+        public async Task<ActionResult<ProductReadDto>> Create([FromBody] ProductCreateDto dto)
         {
-            var product = new Product
-            {
-                Name = dto.Name,
-                Price = dto.Price,
-                Description = dto.Description
-            };
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            _db.Products.Add(product);
-            await _db.SaveChangesAsync();
-
-            _logger.LogInformation("Produk baru ditambahkan: {Name}", dto.Name);
-
-            var result = new ProductReadDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Price = product.Price,
-                Description = product.Description,
-                CreatedAt = product.CreatedAt
-            };
-
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, result);
+            var created = await _service.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         // 🔹 PUT: api/products/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, ProductCreateDto dto)
+        public async Task<ActionResult<ProductReadDto>> Update(int id, [FromBody] ProductUpdateDto dto)
         {
-            var existing = await _db.Products.FindAsync(id);
-            if (existing == null)
-                return NotFound(new { message = $"Product dengan id {id} tidak ditemukan." });
+            var updated = await _service.UpdateAsync(id, dto);
+            if (updated == null)
+                return NotFound(new { message = $"Product with id {id} not found." });
 
-            existing.Name = dto.Name;
-            existing.Price = dto.Price;
-            existing.Description = dto.Description;
-
-            await _db.SaveChangesAsync();
-            _logger.LogInformation("Produk dengan ID {Id} berhasil diupdate", id);
-
-            return NoContent();
+            return Ok(updated);
         }
 
         // 🔹 DELETE: api/products/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var product = await _db.Products.FindAsync(id);
-            if (product == null)
-                return NotFound(new { message = $"Product dengan id {id} tidak ditemukan." });
-
-            _db.Products.Remove(product);
-            await _db.SaveChangesAsync();
-            _logger.LogInformation("Produk dengan ID {Id} dihapus", id);
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
+                return NotFound(new { message = $"Product with id {id} not found." });
 
             return NoContent();
         }

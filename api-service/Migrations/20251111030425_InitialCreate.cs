@@ -16,37 +16,37 @@ namespace api_service.Migrations
                 name: "products",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Price = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
-                    Description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    price = table.Column<decimal>(type: "numeric", nullable: false),
+                    description = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_products", x => x.Id);
+                    table.PrimaryKey("PK_products", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Username = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
+                    username = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    password_hash = table.Column<string>(type: "text", nullable: false),
+                    role = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.Id);
+                    table.PrimaryKey("PK_users", x => x.id);
                 });
 
             migrationBuilder.InsertData(
                 table: "users",
-                columns: new[] { "Id", "PasswordHash", "Role", "Username" },
-                values: new object[] { 1, "123", "Admin", "admin" });
+                columns: new[] { "id", "password_hash", "role", "username" },
+                values: new object[] { 1, "$2a$12$gzXHS7/t.nd76CXC96UmMuL4wrPqNACVvc76z0hWtPqskiB.lMjPq", "Admin", "admin" });
         }
 
         /// <inheritdoc />
