@@ -2,7 +2,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ApiService.Models.DTOs
 {
-    public class LoginRequestDto
+    public class RegisterDto
+    {
+        [Required]
+        public string Name { get; set; } = string.Empty;
+
+        [Required, MinLength(3), MaxLength(100)]
+        public string Username { get; set; } = string.Empty;
+
+        [Required, MinLength(6)]
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class LoginDto
     {
         [Required]
         public string Username { get; set; } = string.Empty;
@@ -11,11 +23,9 @@ namespace ApiService.Models.DTOs
         public string Password { get; set; } = string.Empty;
     }
 
-    public class LoginResponseDto
+    public class AuthResponseDto
     {
         public string Token { get; set; } = string.Empty;
-        public string Username { get; set; } = string.Empty;
-        public string Role { get; set; } = string.Empty;
-        public DateTime ExpiresAt { get; set; }
+        public UserDto User { get; set; } = new UserDto();
     }
 }

@@ -64,10 +64,20 @@ namespace api_service.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("bytea")
                         .HasColumnName("password_hash");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("password_salt");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -84,15 +94,6 @@ namespace api_service.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            PasswordHash = "$2a$12$gzXHS7/t.nd76CXC96UmMuL4wrPqNACVvc76z0hWtPqskiB.lMjPq",
-                            Role = "Admin",
-                            Username = "admin"
-                        });
                 });
 #pragma warning restore 612, 618
         }

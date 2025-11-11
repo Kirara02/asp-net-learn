@@ -1,4 +1,9 @@
+using System.Security.Cryptography;
+using System.Text;
+using ApiService.Data;
 using ApiService.Extensions;
+using ApiService.Models;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace ApiService
@@ -19,14 +24,18 @@ namespace ApiService
 
             builder.Services
                 .AddDatabase(builder.Configuration)
-                .AddAppServices()
+                .AddRepositories()
+                .AddDomainServices()
+                .AddJwtAuthentication(builder.Configuration)
                 .AddAutoMapper(typeof(AutoMapperProfile))
                 .AddJsonSnakeCase()
-                .AddSwaggerWithJwt();
+                .AddSwaggerWithJwt()
+                .AddCorsPolicyAllowAll();
+
 
             var app = builder.Build();
 
-            app.ApplyMigrations();
+            app.ApplyMigrationsAndSeed();
 
             if (app.Environment.IsDevelopment())
             {
@@ -40,6 +49,7 @@ namespace ApiService
 
             app.UseHttpsRedirection();
             app.UseSerilogRequestLogging();
+            app.UseCorsPolicyAllowAll();
             app.UseAuthentication();
             app.UseAuthorization();
 

@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using ApiService.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,17 +26,6 @@ namespace ApiService.Data
                 foreach (var property in entity.GetProperties())
                     property.SetColumnName(ToSnakeCase(property.GetColumnName()!));
             }
-            
-            // Optional: seed data default user admin
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    Username = "admin",
-                    PasswordHash = "$2a$12$gzXHS7/t.nd76CXC96UmMuL4wrPqNACVvc76z0hWtPqskiB.lMjPq", // password hashed "admin"
-                    Role = "Admin"
-                }
-            );
         }
 
         private static string ToSnakeCase(string name)
