@@ -1,9 +1,4 @@
-using System.Security.Cryptography;
-using System.Text;
-using ApiService.Data;
 using ApiService.Extensions;
-using ApiService.Models;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace ApiService
@@ -30,7 +25,8 @@ namespace ApiService
                 .AddAutoMapper(typeof(AutoMapperProfile))
                 .AddJsonSnakeCase()
                 .AddSwaggerWithJwt()
-                .AddCorsPolicyAllowAll();
+                .AddCorsPolicyAllowAll()
+                .AddValidationResponse();
 
 
             var app = builder.Build();
@@ -47,11 +43,7 @@ namespace ApiService
                 });
             }
 
-            app.UseHttpsRedirection();
-            app.UseSerilogRequestLogging();
-            app.UseCorsPolicyAllowAll();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseGlobalMiddlewares();
 
             app.MapGet("/", () => "Hello from Kirara's .NET API 👋");
             app.MapControllers();
