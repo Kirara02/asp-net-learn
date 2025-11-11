@@ -1,0 +1,46 @@
+# Build results
+bin/
+obj/
+out/
+TestResults/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.log
+*.dbmdl
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.vs/
+.vscode/
+.idea/
+
+# Tooling & temp
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# Entity Framework Migrations snapshot cache
+Migrations/*.Designer.cs
+
+# Dotnet user secrets
+secrets.json
+*.secret.json
+
+.env
+.env.*
+*.sqlite
+
+# macOS system files
+.DS_Store
