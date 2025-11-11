@@ -30,7 +30,6 @@ api-service/
 ├── Services/              # Business logic layer
 ├── Middleware/            # Custom global middleware
 ├── Extensions/            # DI & configuration extensions
-├── Logs/                  # Serilog log files
 ├── Program.cs             # Application entry point
 └── appsettings.json       # Configuration
 ```
