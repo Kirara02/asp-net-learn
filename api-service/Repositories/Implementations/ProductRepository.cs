@@ -17,5 +17,23 @@ namespace ApiService.Repositories.Implementations
         public void Update(Product product) => _context.Products.Update(product);
         public void Delete(Product product) => _context.Products.Remove(product);
         public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
+
+        public async Task<(IEnumerable<Product> Items, int Total)> GetPagedAsync(int page, int limit, string? search)
+        {
+            var query = _context.Products.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(p => p.Name.ToLower().Contains(search.ToLower()));
+
+            var total = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(p => p.Id)
+                .Skip((page - 1) * limit)
+                .Take(limit)
+                .ToListAsync();
+
+            return (items, total);
+        }
     }
 }

@@ -3,6 +3,8 @@ using ApiService.Models;
 using ApiService.Repositories.Interfaces;
 using ApiService.Services.Interfaces;
 using AutoMapper;
+using ApiService.Models.Common;
+using ApiService.Models.DTOs.Common;
 
 namespace ApiService.Services.Implementations
 {
@@ -59,6 +61,21 @@ namespace ApiService.Services.Implementations
             _repository.Delete(existing);
             await _repository.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<PagedResponse<ProductReadDto>> GetPagedAsync(QueryParamsDto query)
+        {
+            var (items, total) = await _repository.GetPagedAsync(query.Page, query.Limit, query.Search);
+
+            var mapped = _mapper.Map<IEnumerable<ProductReadDto>>(items);
+
+            return new PagedResponse<ProductReadDto>
+            {
+                Items = mapped,
+                TotalItems = total,
+                Page = query.Page,
+                Limit = query.Limit
+            };
         }
     }
 }

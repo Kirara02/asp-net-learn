@@ -1,4 +1,6 @@
+using ApiService.Models.Common;
 using ApiService.Models.DTOs;
+using ApiService.Models.DTOs.Common;
 using ApiService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +21,10 @@ namespace ApiService.Controllers
 
         // 🔹 GET: api/products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductReadDto>>> GetAll()
+        public async Task<ActionResult<ApiResponse<PagedResponse<ProductReadDto>>>> GetPaged([FromQuery] QueryParamsDto query)
         {
-            var products = await _service.GetAllAsync();
-            return Ok(products);
+            var paged = await _service.GetPagedAsync(query);
+            return Ok(paged);
         }
 
         // 🔹 GET: api/products/{id}
