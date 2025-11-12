@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using ApiService.Models.Common;
+using System.Text.RegularExpressions;
 
 namespace ApiService.Extensions
 {
@@ -10,25 +12,32 @@ namespace ApiService.Extensions
             {
                 options.InvalidModelStateResponseFactory = context =>
                 {
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                        .CreateLogger("ModelValidation");
+
                     var errors = context.ModelState
-                        .Where(x => x.Value?.Errors.Count > 0)
+                        .Where(e => e.Value?.Errors.Count > 0)
                         .ToDictionary(
-                            kvp => kvp.Key,
+                            kvp => ToSnakeCase(kvp.Key),
                             kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
                         );
 
-                    var result = new
-                    {
-                        success = false,
-                        message = "Validation failed",
-                        errors
-                    };
+                    logger.LogWarning("Validation failed: {@Errors}", errors);
 
-                    return new BadRequestObjectResult(result);
+                    var response = ApiResponse<object>.Fail("Validation failed", 400, errors);
+
+                    return new BadRequestObjectResult(response);
                 };
             });
 
             return services;
+        }
+
+        private static string ToSnakeCase(string input)
+        {
+            if (string.IsNullOrEmpty(input)) return input;
+
+            return Regex.Replace(input, @"([a-z0-9])([A-Z])", "$1_$2").ToLower();
         }
     }
 }

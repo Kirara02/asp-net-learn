@@ -13,8 +13,10 @@ namespace ApiService.Extensions
             // ✅ 2. CORS Policy
             app.UseCorsPolicyAllowAll();
 
-            app.UseMiddleware<ResponseWrapperMiddleware>();
+            app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<ResponseWrapperMiddleware>();
+
 
             // ✅ 4. Authentication & Authorization
             app.UseAuthentication();

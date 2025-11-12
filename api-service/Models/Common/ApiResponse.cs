@@ -17,7 +17,7 @@ namespace ApiService.Models.Common
                 Status = status
             };
 
-        public static ApiResponse<T> Fail(string message, int status = 400, string? details = null)
+        public static ApiResponse<T> Fail(string message, int status = 400, object? details = null)
             => new()
             {
                 Success = false,
@@ -31,11 +31,5 @@ namespace ApiService.Models.Common
                 Status = status
             };
     }
-
-    public class ApiError
-    {
-        public int Code { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public string? Details { get; set; }
-    }
+    
 }

@@ -1,4 +1,3 @@
-using System.Net;
 using System.Text.Json;
 using ApiService.Models.Common;
 
@@ -17,122 +16,108 @@ namespace ApiService.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var originalBodyStream = context.Response.Body;
-
-            using var memStream = new MemoryStream();
+            var originalBody = context.Response.Body;
+            await using var memStream = new MemoryStream();
             context.Response.Body = memStream;
 
             await _next(context);
 
             memStream.Seek(0, SeekOrigin.Begin);
-            var responseBody = await new StreamReader(memStream).ReadToEndAsync();
+            var bodyText = await new StreamReader(memStream).ReadToEndAsync();
             memStream.Seek(0, SeekOrigin.Begin);
+            context.Response.Body = originalBody;
 
-            context.Response.Body = originalBodyStream;
-
-            // skip swagger and html
+            // skip swagger/html
             if (context.Request.Path.StartsWithSegments("/swagger") ||
                 context.Response.ContentType?.Contains("text/html") == true)
             {
-                await context.Response.WriteAsync(responseBody);
+                await context.Response.WriteAsync(bodyText);
                 return;
             }
 
-            // ✅ wrapping
-            var status = context.Response.StatusCode;
-            object wrapper;
+            if (string.IsNullOrWhiteSpace(bodyText))
+                bodyText = "{}";
 
-            if (status >= 200 && status < 300)
+            if (bodyText.Contains("\"success\":") && bodyText.Contains("\"error\":"))
             {
-                var data = TryDeserializeJson(responseBody);
-                string? message = null;
-                object? finalData = null;
-
-                try
-                {
-                    using var doc = JsonDocument.Parse(responseBody);
-
-                    // Ambil message kalau ada
-                    if (doc.RootElement.TryGetProperty("message", out var msgProp))
-                        message = msgProp.GetString();
-
-                    // Kalau ada properti data, ambil datanya
-                    if (doc.RootElement.TryGetProperty("data", out var dataProp))
-                        finalData = JsonSerializer.Deserialize<object>(dataProp.GetRawText());
-                    else
-                    {
-                        // ✅ Jika hanya ada message tanpa data -> data null
-                        if (doc.RootElement.EnumerateObject().Count() > 1)
-                            finalData = JsonSerializer.Deserialize<object>(responseBody);
-                    }
-                }
-                catch
-                {
-                    finalData = data;
-                }
-
-                wrapper = ApiResponse<object>.Ok(
-                    data: finalData,
-                    status: status,
-                    message: message ?? "Request completed successfully."
-                );
+                await context.Response.WriteAsync(bodyText);
+                return;
             }
-            else
-            {
-                var message = TryExtractErrorMessage(responseBody);
 
-                if (string.IsNullOrWhiteSpace(message))
+            var statusCode = context.Response.StatusCode;
+            object result;
+            var correlationId = context.Items["CorrelationId"]?.ToString();
+
+            try
+            {
+                if (statusCode >= 200 && statusCode < 300)
                 {
-                    message = status switch
+                    var data = TryDeserialize(bodyText);
+                    result = ApiResponse<object>.Ok(data, statusCode);
+                }
+                else
+                {
+                    string message = statusCode switch
                     {
                         400 => "Bad request.",
                         401 => "Unauthorized. Please provide a valid token.",
                         403 => "Forbidden. You don't have permission to access this resource.",
                         404 => "Resource not found.",
                         500 => "Internal server error.",
-                        _ => $"Request failed with status code {status}."
+                        _ => "Request failed."
                     };
+
+                    object? details = null;
+
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(bodyText);
+                        if (doc.RootElement.TryGetProperty("message", out var msgProp))
+                            message = msgProp.GetString() ?? message;
+                        if (doc.RootElement.TryGetProperty("error", out var errProp) &&
+                            errProp.TryGetProperty("details", out var detailsProp))
+                            details = JsonSerializer.Deserialize<object>(detailsProp.GetRawText());
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "⚠️ Failed to parse error response body.");
+                    }
+
+                    var enhancedDetails = new
+                    {
+                        path = context.Request.Path,
+                        timestamp = DateTime.UtcNow,
+                        correlation_id = correlationId,
+                        info = details
+                    };
+
+                    result = ApiResponse<object>.Fail(message, statusCode, enhancedDetails);
                 }
-
-                wrapper = ApiResponse<object>.Fail(message, status);
-
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "🔥 Failed to wrap response.");
+                result = ApiResponse<object>.Fail("Response wrapping error.", 500, new
+                {
+                    correlation_id = correlationId,
+                    error = ex.Message
+                });
             }
 
-            var json = JsonSerializer.Serialize(
-                wrapper,
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-                    WriteIndented = true
-                }
-            );
+            var json = JsonSerializer.Serialize(result, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                WriteIndented = true
+            });
 
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(json);
         }
 
-        private static object? TryDeserializeJson(string raw)
+        private static object? TryDeserialize(string raw)
         {
-            try
-            {
-                return JsonSerializer.Deserialize<object>(raw);
-            }
-            catch
-            {
-                return raw;
-            }
-        }
-
-        private static string TryExtractErrorMessage(string raw)
-        {
-            try
-            {
-                using var doc = JsonDocument.Parse(raw);
-                if (doc.RootElement.TryGetProperty("message", out var msg))
-                    return msg.GetString() ?? "Error";
-            }
-            catch { }
-            return raw;
+            try { return JsonSerializer.Deserialize<object>(raw); }
+            catch { return raw; }
         }
     }
 }

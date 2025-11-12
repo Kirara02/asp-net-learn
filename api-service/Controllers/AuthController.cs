@@ -59,6 +59,7 @@ namespace ApiService.Controllers
             var userDto = new UserDto
             {
                 Id = user.Id,
+                Name = user.Name,
                 Username = user.Username,
                 Role = user.Role
             };
