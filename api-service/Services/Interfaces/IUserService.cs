@@ -5,7 +5,11 @@ namespace ApiService.Services.Implementations
 {
     public interface IUserService
     {
-        Task<User> RegisterAsync(RegisterDto dto);
-        Task<User?> ValidateUserAsync(LoginDto dto);
+        Task<UserDto> RegisterAsync(RegisterDto dto);
+        Task<UserDto?> ValidateUserAsync(LoginDto dto);
+        Task<UserDto?> GetByIdAsync(int id);
+        Task<IEnumerable<UserDto>> GetAllAsync();
+        Task<bool> DeleteAsync(int id);
+        Task<UserDto?> UpdateAsync(int id, RegisterDto dto);
     }
 }

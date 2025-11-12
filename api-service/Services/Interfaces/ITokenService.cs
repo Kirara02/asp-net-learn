@@ -1,9 +1,9 @@
-using ApiService.Models.Entities;
+using ApiService.Models.DTOs;
 
 namespace ApiService.Services.Interfaces
 {
     public interface ITokenService
     {
-        string GenerateToken(User user);
+        string GenerateToken(UserDto user);
     }
 }

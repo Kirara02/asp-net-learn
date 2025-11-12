@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -11,20 +13,30 @@ namespace ApiService.Extensions
             var jwtSection = config.GetSection("Jwt");
             var key = Encoding.UTF8.GetBytes(jwtSection["Key"]!);
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSection["Issuer"],
-                        ValidAudience = jwtSection["Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(key)
-                    };
-                });
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSection["Issuer"],
+                    ValidAudience = jwtSection["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+
+                    // 👇 gunakan "role" dari payload JSON
+                    NameClaimType = JwtRegisteredClaimNames.Sub,
+                    RoleClaimType = ClaimTypes.Role
+                };
+            });
 
             return services;
         }

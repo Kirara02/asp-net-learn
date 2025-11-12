@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ApiService.Models.Entities;
+using ApiService.Models.DTOs;
 using ApiService.Services.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,7 +16,7 @@ namespace ApiService.Services.Implementations
             _config = config;
         }
 
-        public string GenerateToken(User user)
+        public string GenerateToken(UserDto user)
         {
             var jwtSection = _config.GetSection("Jwt");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSection["Key"]!));
@@ -24,9 +24,9 @@ namespace ApiService.Services.Implementations
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // ID user
+                new Claim("username", user.Username),                       // custom
+                new Claim("role", user.Role ?? "User"),                     // role standar
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -40,5 +40,6 @@ namespace ApiService.Services.Implementations
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

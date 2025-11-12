@@ -24,9 +24,27 @@ namespace ApiService.Repositories.Implementations
             return await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
+        public async Task<IEnumerable<User>> GetAllAsync()
+        {
+            return await _db.Users
+                .AsNoTracking()
+                .OrderBy(u => u.Id)
+                .ToListAsync();
+        }
+
         public async Task AddAsync(User user)
         {
             await _db.Users.AddAsync(user);
+        }
+
+        public void Update(User user)
+        {
+            _db.Users.Update(user);
+        }
+
+        public void Delete(User user)
+        {
+            _db.Users.Remove(user);
         }
 
         public async Task SaveChangesAsync()
