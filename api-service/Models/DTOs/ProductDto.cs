@@ -12,6 +12,9 @@ namespace ApiService.Models.DTOs
 
         [MaxLength(255)]
         public string? Description { get; set; }
+
+        // 🔹 Tambahkan CategoryId
+        public int? CategoryId { get; set; }
     }
 
     public class ProductReadDto
@@ -21,6 +24,9 @@ namespace ApiService.Models.DTOs
         public decimal Price { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        // 🔹 Tambahkan category info
+        public CategoryDto? Category { get; set; }
     }
 
     public class ProductUpdateDto
@@ -28,5 +34,6 @@ namespace ApiService.Models.DTOs
         public string? Name { get; set; }
         public decimal? Price { get; set; }
         public string? Description { get; set; }
+        public int? CategoryId { get; set; }
     }
 }

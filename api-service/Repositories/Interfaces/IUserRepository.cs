@@ -1,4 +1,4 @@
-using ApiService.Models;
+using ApiService.Models.Entities;
 
 namespace ApiService.Repositories.Interfaces
 {

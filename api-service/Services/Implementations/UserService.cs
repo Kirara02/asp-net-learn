@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using ApiService.Models;
+using ApiService.Models.Entities;
 using ApiService.Models.DTOs;
 using ApiService.Repositories.Interfaces;
 

@@ -8,6 +8,7 @@ namespace ApiService.Extensions
         public static IServiceCollection AddDomainServices(this IServiceCollection services)
         {
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
             return services;

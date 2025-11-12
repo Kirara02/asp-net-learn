@@ -1,4 +1,4 @@
-using ApiService.Models;
+using ApiService.Models.Entities;
 using ApiService.Models.DTOs;
 
 namespace ApiService.Services.Implementations

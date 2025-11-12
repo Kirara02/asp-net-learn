@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ApiService.Models
+namespace ApiService.Models.Entities
 {
     [Table("users")]
     public class User

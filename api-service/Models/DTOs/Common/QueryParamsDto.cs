@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace ApiService.Models.DTOs.Common
 {
     public class QueryParamsDto
@@ -6,5 +8,9 @@ namespace ApiService.Models.DTOs.Common
         public int Limit { get; set; } = 10;
         public string? Search { get; set; }
         public string? Sort { get; set; }
+
+        // 🆕 filter by category
+        [FromQuery(Name = "category_id")]
+        public int? CategoryId { get; set; }
     }
 }

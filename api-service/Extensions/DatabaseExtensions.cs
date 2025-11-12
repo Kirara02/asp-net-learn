@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using ApiService.Data;
-using ApiService.Models;
+using ApiService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiService.Extensions

@@ -1,5 +1,5 @@
 using ApiService.Models.DTOs;
-using ApiService.Models;
+using ApiService.Models.Entities;
 using ApiService.Repositories.Interfaces;
 using ApiService.Services.Interfaces;
 using AutoMapper;
@@ -65,7 +65,12 @@ namespace ApiService.Services.Implementations
 
         public async Task<PagedResponse<ProductReadDto>> GetPagedAsync(QueryParamsDto query)
         {
-            var (items, total) = await _repository.GetPagedAsync(query.Page, query.Limit, query.Search);
+            var (items, total) = await _repository.GetPagedAsync(
+                query.Page,
+                query.Limit,
+                query.Search,
+                query.CategoryId
+            );
 
             var mapped = _mapper.Map<IEnumerable<ProductReadDto>>(items);
 

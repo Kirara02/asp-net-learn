@@ -1,6 +1,4 @@
-using System.Security.Cryptography;
-using System.Text;
-using ApiService.Models;
+using ApiService.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiService.Data
@@ -13,10 +11,17 @@ namespace ApiService.Data
 
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Products)
+                .WithOne(p => p.Category)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // 🔹 Convert table & column names to snake_case
             foreach (var entity in modelBuilder.Model.GetEntityTypes())

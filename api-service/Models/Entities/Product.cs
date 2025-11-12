@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ApiService.Models
+namespace ApiService.Models.Entities
 {
     [Table("products")]
     public class Product
@@ -20,5 +20,11 @@ namespace ApiService.Models
         public string? Description { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // 🆕 Relasi ke Category
+        [ForeignKey("Category")]
+        public int? CategoryId { get; set; }
+
+        public Category? Category { get; set; }
     }
 }
