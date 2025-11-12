@@ -44,10 +44,37 @@ namespace ApiService.Middleware
 
             if (status >= 200 && status < 300)
             {
+                var data = TryDeserializeJson(responseBody);
+                string? message = null;
+                object? finalData = null;
+
+                try
+                {
+                    using var doc = JsonDocument.Parse(responseBody);
+
+                    // Ambil message kalau ada
+                    if (doc.RootElement.TryGetProperty("message", out var msgProp))
+                        message = msgProp.GetString();
+
+                    // Kalau ada properti data, ambil datanya
+                    if (doc.RootElement.TryGetProperty("data", out var dataProp))
+                        finalData = JsonSerializer.Deserialize<object>(dataProp.GetRawText());
+                    else
+                    {
+                        // ✅ Jika hanya ada message tanpa data -> data null
+                        if (doc.RootElement.EnumerateObject().Count() > 1)
+                            finalData = JsonSerializer.Deserialize<object>(responseBody);
+                    }
+                }
+                catch
+                {
+                    finalData = data;
+                }
+
                 wrapper = ApiResponse<object>.Ok(
-                    TryDeserializeJson(responseBody),
-                    status,
-                    message: "Request completed successfully."
+                    data: finalData,
+                    status: status,
+                    message: message ?? "Request completed successfully."
                 );
             }
             else

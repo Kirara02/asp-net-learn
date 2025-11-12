@@ -68,7 +68,9 @@ namespace ApiService.Controllers
             if (!deleted)
                 return NotFound(new { message = $"Product with id {id} not found." });
 
-            return NoContent();
+            return Ok(
+                new { message = $"Product with id {id} deleted successfully." }
+            );
         }
     }
 }
