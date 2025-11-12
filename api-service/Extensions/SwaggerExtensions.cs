@@ -18,8 +18,7 @@ namespace ApiService.Extensions
                     Contact = new OpenApiContact
                     {
                         Name = "Kirara Bernstein",
-                        Url = new Uri("https://github.com/your-github-or-portfolio"),
-                        Email = "youremail@example.com"
+                        Url = new Uri("https://https://fathul-portfolio.netlify.app/")
                     },
                     License = new OpenApiLicense
                     {
