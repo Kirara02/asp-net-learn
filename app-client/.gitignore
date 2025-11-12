@@ -1,0 +1,231 @@
+# ============================
+# .NET MAUI / Xamarin / Visual Studio
+# ============================
+
+## Build directories
+bin/
+obj/
+[Bb]uild/
+[Bb]uilds/
+
+## User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.pidb
+*.svclog
+*.pdb
+*.dbmdl
+*.dbproj.schemaview
+*.opendb
+
+## Visual Studio cache
+.vs/
+.idea/
+*.VC.db
+*.VC.VC.opendb
+
+## Rider
+.idea/
+*.sln.iml
+
+## macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+
+## Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+## JetBrains cache
+.gradle/
+.idea/
+*.iml
+
+## Logs and crash reports
+*.log
+*.tlog
+*.tlog.lock
+crashlytics-build.properties
+*.orig
+*.rej
+
+# ============================
+# .NET
+# ============================
+
+## Ignore auto-generated files
+project.lock.json
+project.fragment.lock.json
+artifacts/
+_Packages/
+nuget.exe
+*.nupkg
+*.snupkg
+*.nuspec
+*.psess
+*.vsp
+*.vspscc
+*.vssscc
+*.cachefile
+*.vscode/
+
+## Dotnet user secrets
+secrets.json
+UserSecrets/
+**/Properties/launchSettings.json
+
+## Workload restore cache
+.dotnet/
+.nuget/
+nupkg/
+packages/
+PackageRestoreLogs/
+
+# ============================
+# MAUI Specific
+# ============================
+
+## Android
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.jar
+*.keystore
+*.jks
+android/bin/
+android/obj/
+android/local.properties
+android/.gradle/
+android/app/build/
+.android/
+*.aar
+
+## iOS / MacCatalyst
+*.app
+*.ipa
+*.dSYM
+*.xcarchive
+*.xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+*.xcworkspace/
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+ios/bin/
+ios/obj/
+maccatalyst/bin/
+maccatalyst/obj/
+
+## Windows
+*.appx
+*.appxbundle
+*.appxupload
+*.appxrecipe
+*.bundle
+*.msix
+*.msixbundle
+*.msixupload
+*.msixrecipe
+*.wapproj.user
+windows/bin/
+windows/obj/
+
+## Tizen
+tizen/bin/
+tizen/obj/
+
+# ============================
+# Development tools
+# ============================
+
+## VS Code
+.vscode/
+.history/
+*.code-workspace
+
+## Resharper / JetBrains
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+## Rider settings
+.idea/
+.idea_modules/
+.idea/**
+*.iml
+
+## Other IDE caches
+*.sublime-project
+*.sublime-workspace
+
+# ============================
+# Temporary & OS Files
+# ============================
+
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.orig
+*.rej
+*.backup
+*~
+*.nib
+*.pid
+
+# ============================
+# Security / Certificates
+# ============================
+
+*.pfx
+*.p12
+*.cer
+*.key
+*.pem
+*.crt
+*.der
+
+# ============================
+# Miscellaneous
+# ============================
+
+# Generated MAUI image assets
+Resources/Raw/*
+!Resources/Raw/keep.txt
+Resources/AppIcon/*.svg
+Resources/Splash/*.svg
+Resources/AppIcon/AppIcon.assets.json
+Resources/Splash/Splash.assets.json
+
+# Transient caches
+.localhistory/
+*.tmp/
+.cache/
+.cache/
+
+# Temporary backups
+*.bak
+*.orig
+
+# Coverage reports
+coverage/
+TestResults/
+*.coverage
+*.coveragexml
+
+# ============================
+# Custom user exclusions
+# ============================
+
+# Uncomment if you store secrets in config files
+# appsettings.*.json
+
+# Uncomment to ignore environment overrides
+# .env
