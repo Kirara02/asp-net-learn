@@ -40,6 +40,7 @@ namespace ApiService.Controllers
 
         // 🔹 POST: api/products
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProductReadDto>> Create([FromBody] ProductCreateDto dto)
         {
             if (!ModelState.IsValid)
@@ -51,6 +52,7 @@ namespace ApiService.Controllers
 
         // 🔹 PUT: api/products/{id}
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ProductReadDto>> Update(int id, [FromBody] ProductUpdateDto dto)
         {
             var updated = await _service.UpdateAsync(id, dto);
@@ -62,6 +64,7 @@ namespace ApiService.Controllers
 
         // 🔹 DELETE: api/products/{id}
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _service.DeleteAsync(id);
