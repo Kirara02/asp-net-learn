@@ -1,5 +1,7 @@
 using System.Text.Json;
 using ApiService.Models.Common;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace ApiService.Middleware
 {
@@ -7,11 +9,16 @@ namespace ApiService.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ResponseWrapperMiddleware> _logger;
+        private readonly JsonSerializerOptions _jsonOptions;
 
-        public ResponseWrapperMiddleware(RequestDelegate next, ILogger<ResponseWrapperMiddleware> logger)
+        public ResponseWrapperMiddleware(
+            RequestDelegate next,
+            ILogger<ResponseWrapperMiddleware> logger,
+            IOptions<JsonOptions> jsonOptions)
         {
             _next = next;
             _logger = logger;
+            _jsonOptions = jsonOptions.Value.JsonSerializerOptions;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -104,11 +111,7 @@ namespace ApiService.Middleware
                 });
             }
 
-            var json = JsonSerializer.Serialize(result, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-                WriteIndented = true
-            });
+            var json = JsonSerializer.Serialize(result, _jsonOptions);
 
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(json);

@@ -12,7 +12,7 @@ namespace ApiService
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File("Logs/api.log", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
-                
+
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Host.UseSerilog();
@@ -23,7 +23,7 @@ namespace ApiService
                 .AddDomainServices()
                 .AddJwtAuthentication(builder.Configuration)
                 .AddAutoMapper(typeof(AutoMapperProfile))
-                .AddJsonSnakeCase()
+                .AddJsonOptions()
                 .AddSwaggerWithJwt()
                 .AddCorsPolicyAllowAll()
                 .AddValidationResponse();
